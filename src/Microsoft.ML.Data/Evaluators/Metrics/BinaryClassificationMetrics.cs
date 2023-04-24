@@ -79,11 +79,18 @@ namespace Microsoft.ML.Data
         /// </remarks>
         public double AreaUnderPrecisionRecallCurve { get; }
 
+
+        /// <summary>
+        /// Gets the accuracy in the top / bottom percentiles
+        /// </summary>
+        public double TopBottomPercentileAccuracy { get; }
+
         /// <summary>
         /// The <a href="https://en.wikipedia.org/wiki/Confusion_matrix">confusion matrix</a> giving the counts of the
         /// true positives, true negatives, false positives and false negatives for the two classes of data.
         /// </summary>
         public ConfusionMatrix ConfusionMatrix { get; }
+
 
         private protected static T Fetch<T>(IExceptionContext ectx, DataViewRow row, string name)
         {
@@ -100,6 +107,7 @@ namespace Microsoft.ML.Data
             double Fetch(string name) => Fetch<double>(host, overallResult, name);
             AreaUnderRocCurve = Fetch(BinaryClassifierEvaluator.Auc);
             Accuracy = Fetch(BinaryClassifierEvaluator.Accuracy);
+            TopBottomPercentileAccuracy = Fetch(BinaryClassifierEvaluator.TopBottomPercentileAccuracy);
             PositivePrecision = Fetch(BinaryClassifierEvaluator.PosPrecName);
             PositiveRecall = Fetch(BinaryClassifierEvaluator.PosRecallName);
             NegativePrecision = Fetch(BinaryClassifierEvaluator.NegPrecName);
@@ -110,10 +118,12 @@ namespace Microsoft.ML.Data
         }
 
         [BestFriend]
-        internal BinaryClassificationMetrics(double auc, double accuracy, double positivePrecision, double positiveRecall,
+        internal BinaryClassificationMetrics(double auc, double tbaccuracy, double accuracy,
+            double positivePrecision, double positiveRecall,
             double negativePrecision, double negativeRecall, double f1Score, double auprc)
         {
             AreaUnderRocCurve = auc;
+            TopBottomPercentileAccuracy = tbaccuracy;
             Accuracy = accuracy;
             PositivePrecision = positivePrecision;
             PositiveRecall = positiveRecall;
@@ -123,9 +133,11 @@ namespace Microsoft.ML.Data
             AreaUnderPrecisionRecallCurve = auprc;
         }
 
-        internal BinaryClassificationMetrics(double auc, double accuracy, double positivePrecision, double positiveRecall,
-            double negativePrecision, double negativeRecall, double f1Score, double auprc, ConfusionMatrix confusionMatrix)
-            : this(auc, accuracy, positivePrecision, positiveRecall, negativePrecision, negativeRecall, f1Score, auprc)
+        internal BinaryClassificationMetrics(double auc, double tbaccuracy, double accuracy, double positivePrecision,
+            double positiveRecall,
+            double negativePrecision, double negativeRecall, double f1Score, double auprc,
+            ConfusionMatrix confusionMatrix)
+            : this(auc, tbaccuracy, accuracy, positivePrecision, positiveRecall, negativePrecision, negativeRecall, f1Score, auprc)
         {
             ConfusionMatrix = confusionMatrix;
         }

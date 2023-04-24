@@ -107,6 +107,8 @@ namespace Microsoft.ML.Trainers.Ensemble
         NegPrecision = 4,
         [TGUI(Label = BinaryClassifierEvaluator.NegRecallName)]
         NegRecall = 5,
+        [TGUI(Label = BinaryClassifierEvaluator.TopBottomPercentileAccuracy)]
+        TopBottomPercentileAccuracy = 6,
     }
 
 }

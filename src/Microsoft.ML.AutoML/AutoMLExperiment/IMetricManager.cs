@@ -39,6 +39,7 @@ namespace Microsoft.ML.AutoML
         public bool IsMaximize => Metric switch
         {
             BinaryClassificationMetric.Accuracy => true,
+            BinaryClassificationMetric.TopBottomPercentileAccuracy => true,
             BinaryClassificationMetric.AreaUnderPrecisionRecallCurve => true,
             BinaryClassificationMetric.AreaUnderRocCurve => true,
             BinaryClassificationMetric.PositivePrecision => true,
@@ -58,6 +59,7 @@ namespace Microsoft.ML.AutoML
             return Metric switch
             {
                 BinaryClassificationMetric.Accuracy => metric.Accuracy,
+                BinaryClassificationMetric.TopBottomPercentileAccuracy => metric.TopBottomPercentileAccuracy,
                 BinaryClassificationMetric.AreaUnderPrecisionRecallCurve => metric.AreaUnderPrecisionRecallCurve,
                 BinaryClassificationMetric.AreaUnderRocCurve => metric.AreaUnderRocCurve,
                 BinaryClassificationMetric.PositivePrecision => metric.PositivePrecision,

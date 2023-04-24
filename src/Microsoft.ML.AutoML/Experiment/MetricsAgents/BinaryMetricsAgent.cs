@@ -29,6 +29,8 @@ namespace Microsoft.ML.AutoML
             {
                 case BinaryClassificationMetric.Accuracy:
                     return metrics.Accuracy;
+                case BinaryClassificationMetric.TopBottomPercentileAccuracy:
+                    return metrics.TopBottomPercentileAccuracy;
                 case BinaryClassificationMetric.AreaUnderRocCurve:
                     return metrics.AreaUnderRocCurve;
                 case BinaryClassificationMetric.AreaUnderPrecisionRecallCurve:
@@ -58,6 +60,8 @@ namespace Microsoft.ML.AutoML
             switch (_optimizingMetric)
             {
                 case BinaryClassificationMetric.Accuracy:
+                    return score == 1;
+                case BinaryClassificationMetric.TopBottomPercentileAccuracy:
                     return score == 1;
                 case BinaryClassificationMetric.AreaUnderRocCurve:
                     return score == 1;

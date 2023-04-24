@@ -314,6 +314,7 @@ namespace Microsoft.ML
             return new BinaryClassificationMetrics(
                 auc: a.AreaUnderRocCurve - b.AreaUnderRocCurve,
                 accuracy: a.Accuracy - b.Accuracy,
+                tbaccuracy: a.TopBottomPercentileAccuracy - b.TopBottomPercentileAccuracy,
                 positivePrecision: a.PositivePrecision - b.PositivePrecision,
                 positiveRecall: a.PositiveRecall - b.PositiveRecall,
                 negativePrecision: a.NegativePrecision - b.NegativePrecision,

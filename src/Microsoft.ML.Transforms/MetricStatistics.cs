@@ -150,6 +150,7 @@ namespace Microsoft.ML.Data
         /// Summary Statistics for <see cref="BinaryClassificationMetrics.Accuracy"/>.
         /// </summary>
         public MetricStatistics Accuracy { get; }
+        public MetricStatistics TopBottomPercentileAccuracy { get; }
 
         /// <summary>
         /// Summary statistics for <see cref="BinaryClassificationMetrics.PositivePrecision"/>.
@@ -185,6 +186,7 @@ namespace Microsoft.ML.Data
         {
             AreaUnderRocCurve = new MetricStatistics();
             Accuracy = new MetricStatistics();
+            TopBottomPercentileAccuracy = new MetricStatistics();
             PositivePrecision = new MetricStatistics();
             PositiveRecall = new MetricStatistics();
             NegativePrecision = new MetricStatistics();
@@ -201,6 +203,7 @@ namespace Microsoft.ML.Data
         {
             AreaUnderRocCurve.Add(metrics.AreaUnderRocCurve);
             Accuracy.Add(metrics.Accuracy);
+            TopBottomPercentileAccuracy.Add(metrics.TopBottomPercentileAccuracy);
             PositivePrecision.Add(metrics.PositivePrecision);
             PositiveRecall.Add(metrics.PositiveRecall);
             NegativePrecision.Add(metrics.NegativePrecision);

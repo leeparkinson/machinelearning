@@ -62,6 +62,7 @@ namespace Microsoft.ML.AutoML.Samples
         private static void PrintMetrics(BinaryClassificationMetrics metrics)
         {
             Console.WriteLine($"Accuracy: {metrics.Accuracy}");
+            Console.WriteLine($"TopBottomPercentileAccuracy: {metrics.TopBottomPercentileAccuracy}");
             Console.WriteLine($"AreaUnderPrecisionRecallCurve: {metrics.AreaUnderPrecisionRecallCurve}");
             Console.WriteLine($"AreaUnderRocCurve: {metrics.AreaUnderRocCurve}");
             Console.WriteLine($"F1Score: {metrics.F1Score}");

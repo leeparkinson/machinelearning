@@ -100,6 +100,7 @@ namespace Microsoft.ML.AutoML
 
                 var result = new BinaryClassificationMetrics(
                     auc: GetAverageOfNonNaNScores(newMetrics.Select(x => x.AreaUnderRocCurve)),
+                    tbaccuracy: GetAverageOfNonNaNScores(newMetrics.Select(x => x.TopBottomPercentileAccuracy)),
                     accuracy: GetAverageOfNonNaNScores(newMetrics.Select(x => x.Accuracy)),
                     positivePrecision: GetAverageOfNonNaNScores(newMetrics.Select(x => x.PositivePrecision)),
                     positiveRecall: GetAverageOfNonNaNScores(newMetrics.Select(x => x.PositiveRecall)),

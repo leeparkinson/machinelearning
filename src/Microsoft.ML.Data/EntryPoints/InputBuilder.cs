@@ -859,6 +859,7 @@ namespace Microsoft.ML.EntryPoints
             public const string LogLossReduction = BinaryClassifierEvaluator.LogLossReduction;
             public const string Ndcg = RankingEvaluator.Ndcg;
             public const string Dcg = RankingEvaluator.Dcg;
+            public const string TopBottomPercentileAccuracy = BinaryClassifierEvaluator.TopBottomPercentileAccuracy;
             public const string PositivePrecision = BinaryClassifierEvaluator.PosPrecName;
             public const string PositiveRecall = BinaryClassifierEvaluator.PosRecallName;
             public const string NegativePrecision = BinaryClassifierEvaluator.NegPrecName;

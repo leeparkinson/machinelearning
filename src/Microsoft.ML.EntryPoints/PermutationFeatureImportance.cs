@@ -114,6 +114,8 @@ namespace Microsoft.ML.Transforms
                 metrics.Add(new BinaryMetrics
                 {
                     FeatureName = slotNames[i],
+                    TopBottomPercentileAccuracy = pMetric.TopBottomPercentileAccuracy.Mean,
+                    TopBottomPercentileAccuracyStdErr = pMetric.TopBottomPercentileAccuracy.StandardError,
                     AreaUnderRocCurve = pMetric.AreaUnderRocCurve.Mean,
                     AreaUnderRocCurveStdErr = pMetric.AreaUnderRocCurve.StandardError,
                     Accuracy = pMetric.Accuracy.Mean,
@@ -360,6 +362,8 @@ namespace Microsoft.ML.Transforms
             public double AreaUnderPrecisionRecallCurve { get; set; }
 
             public double AreaUnderPrecisionRecallCurveStdErr { get; set; }
+            public double TopBottomPercentileAccuracy { get; set; }
+            public double TopBottomPercentileAccuracyStdErr { get; set; }
         }
 
         private class MulticlassMetrics

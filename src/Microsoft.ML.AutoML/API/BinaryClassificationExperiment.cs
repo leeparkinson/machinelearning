@@ -89,6 +89,7 @@ namespace Microsoft.ML.AutoML
         /// See <see cref="BinaryClassificationMetrics.NegativeRecall"/>.
         /// </summary>
         NegativeRecall,
+        TopBottomPercentileAccuracy
     }
 
     /// <summary>
@@ -457,6 +458,7 @@ namespace Microsoft.ML.AutoML
             {
                 BinaryClassificationMetric.PositivePrecision => metrics.PositivePrecision,
                 BinaryClassificationMetric.Accuracy => metrics.Accuracy,
+                BinaryClassificationMetric.TopBottomPercentileAccuracy => metrics.TopBottomPercentileAccuracy,
                 BinaryClassificationMetric.AreaUnderRocCurve => metrics.AreaUnderRocCurve,
                 BinaryClassificationMetric.AreaUnderPrecisionRecallCurve => metrics.AreaUnderPrecisionRecallCurve,
                 BinaryClassificationMetric.PositiveRecall => metrics.PositiveRecall,
