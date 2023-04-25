@@ -268,8 +268,9 @@ namespace Microsoft.ML.Data
                     stratVal.Add(stratColVal);
                     isWeighted.Add(false);
                     auc.Add(agg.UnweightedAuc);
+                    topBottomPercentileAccuracy.Add(agg.TopBottomPercentileAccuracy);
                     accuracy.Add(agg.UnweightedCounters.Acc);
-                    topBottomPercentileAccuracy.Add(agg.UnweightedCounters.TopBottomPercentileAccuracy);
+                    //topBottomPercentileAccuracy.Add(agg.UnweightedCounters.Acc); // ****************
                     posPrec.Add(agg.UnweightedCounters.PrecisionPos);
                     posRecall.Add(agg.UnweightedCounters.RecallPos);
                     negPrec.Add(agg.UnweightedCounters.PrecisionNeg);
@@ -292,7 +293,6 @@ namespace Microsoft.ML.Data
                         Host.AssertValue(agg.FalsePositiveRate);
 
                         scores.AddRange(agg.Scores);
-                        topBottomPercentileScores.AddRange(agg.TopBottomPercentileScores);
                         precision.AddRange(agg.Precision);
                         recall.AddRange(agg.Recall);
                         fpr.AddRange(agg.FalsePositiveRate);
@@ -309,6 +309,7 @@ namespace Microsoft.ML.Data
                         stratVal.Add(stratColVal);
                         isWeighted.Add(true);
                         auc.Add(agg.WeightedAuc);
+                        topBottomPercentileAccuracy.Add(agg.TopBottomPercentileAccuracy);
                         accuracy.Add(agg.WeightedCounters.Acc);
                         posPrec.Add(agg.WeightedCounters.PrecisionPos);
                         posRecall.Add(agg.WeightedCounters.RecallPos);
@@ -332,6 +333,7 @@ namespace Microsoft.ML.Data
                             weightedPrecision.AddRange(agg.WeightedPrecision);
                             weightedRecall.AddRange(agg.WeightedRecall);
                             weightedFpr.AddRange(agg.WeightedFalsePositiveRate);
+
                         }
                     }
                 };
@@ -500,14 +502,7 @@ namespace Microsoft.ML.Data
                     }
                 }
 
-                public double TopBottomPercentileAccuracy
-                {
-                    get
-                    {
-                        return (NumTrueNeg + NumTruePos) / (NumTruePos + NumTrueNeg + NumFalseNeg + NumFalsePos);
-                    }
-                }
-
+                public double TopBottomPercentileAccuracy { get; set; }
 
                 public Counters(bool useRaw, Single threshold)
                 {
@@ -555,7 +550,6 @@ namespace Microsoft.ML.Data
 
             private readonly ReservoirSamplerWithoutReplacement<RocInfo> _prCurveReservoir;
             public readonly List<Single> Scores;
-            public readonly List<Single> TopBottomPercentileScores;
             public readonly List<Double> Precision;
             public readonly List<Double> Recall;
             public readonly List<Double> FalsePositiveRate;
@@ -570,6 +564,7 @@ namespace Microsoft.ML.Data
             private readonly AucAggregatorBase _aucAggregator;
             public double WeightedAuc;
             public double UnweightedAuc;
+            public double TopBottomPercentileAccuracy;
 
             public readonly Counters UnweightedCounters;
             public readonly Counters WeightedCounters;
@@ -627,7 +622,6 @@ namespace Microsoft.ML.Data
                     Recall = new List<Double>();
                     FalsePositiveRate = new List<Double>();
                     Scores = new List<Single>();
-                    TopBottomPercentileScores = new List<Single>();
                     if (weighted)
                     {
                         WeightedPrecision = new List<Double>();
@@ -730,15 +724,17 @@ namespace Microsoft.ML.Data
 
             private void FinishOtherMetrics()
             {
+                //Console.WriteLine($"FinishOtherMetrics");
+                TopBottomPercentileAccuracy = _aucAggregator.RatioCorrectInPercentiles;
                 if (_prCurveReservoir != null)
                     ComputePrCurves();
             }
 
             private void ComputePrCurves()
             {
+                //Console.WriteLine($"ComputePrCurves");
                 Host.AssertValue(_prCurveReservoir);
                 Host.AssertValue(Scores);
-                Host.AssertValue(TopBottomPercentileScores);
                 Host.AssertValue(Precision);
                 Host.AssertValue(Recall);
                 Host.AssertValue(FalsePositiveRate);
@@ -746,7 +742,6 @@ namespace Microsoft.ML.Data
                 _prCurveReservoir.Lock();
                 var prSample = _prCurveReservoir.GetSample();
                 Scores.Clear();
-                TopBottomPercentileScores.Clear();
                 Precision.Clear();
                 Recall.Clear();
                 FalsePositiveRate.Clear();
@@ -766,11 +761,8 @@ namespace Microsoft.ML.Data
                 Double wpos = 0;
                 Double wneg = 0;
                 Single scoreCur = Single.PositiveInfinity;
-                var sortedScores = prSample.OrderByDescending(x => x.Score).ToList();
-                int count = sortedScores.Count;
-                var topPercentile = sortedScores[(int)(count * 0.1)].Score;
-                var bottomPercentile = sortedScores[(int)(count * 0.9)].Score;
-                foreach (var point in sortedScores
+
+                foreach (var point in prSample.OrderByDescending(x => x.Score)
                              .Concat(new[] { new RocInfo() { Score = Single.NegativeInfinity } }))
                 {
                     // Add the next point to the precision/recall/fpr lists.
@@ -779,7 +771,6 @@ namespace Microsoft.ML.Data
                         if (pos + neg > 0)
                         {
                             Scores.Add(scoreCur);
-                            if (scoreCur > topPercentile || scoreCur < bottomPercentile) TopBottomPercentileScores.Add(scoreCur);
                             Precision.Add(pos / (pos + neg));
                             Recall.Add(pos);
                             FalsePositiveRate.Add(neg);
@@ -1591,7 +1582,9 @@ namespace Microsoft.ML.Data
             {
                 var schemaBuilder = new DataViewSchema.Builder();
                 foreach (var mc in evaluator.GetOverallMetricColumns())
+                {
                     schemaBuilder.AddColumn(mc.LoadName, NumberDataViewType.Double);
+                }
 
                 overallMetrics = new EmptyDataView(host, schemaBuilder.ToSchema());
             }

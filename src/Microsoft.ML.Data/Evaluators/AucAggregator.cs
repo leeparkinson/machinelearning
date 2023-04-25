@@ -16,6 +16,7 @@ namespace Microsoft.ML.Data
         {
             protected Single Score;
             protected Single Label;
+            public double RatioCorrectInPercentiles { get; internal set; }
 
             public void ProcessRow(Single label, Single score, Single weight = 1)
             {
@@ -39,8 +40,8 @@ namespace Microsoft.ML.Data
             private readonly List<T> _posExamples;
             private readonly List<T> _negExamples;
 
-            protected IEnumerable<T> PosSample;
-            protected IEnumerable<T> NegSample;
+            public IEnumerable<T> PosSample;
+            public IEnumerable<T> NegSample;
 
             protected AucAggregatorBase(Random rand, int reservoirSize)
             {
@@ -101,6 +102,29 @@ namespace Microsoft.ML.Data
                     PosSample = _posExamples;
                     NegSample = _negExamples;
                 }
+
+                CalculateTopBottomPercentile();
+            }
+
+            private void CalculateTopBottomPercentile()
+            {
+                if (typeof(T) != typeof(float)) return;
+
+                var sortedScores = PosSample.Union(NegSample).OrderBy(v => v).ToArray();
+                int count = sortedScores.Length;
+                var topPercentile = (float)(object)sortedScores[(int)(count * 0.9)];
+                var bottomPercentile = (float)(object)sortedScores[(int)(count * 0.1)];
+
+                //Console.WriteLine($"Top Percentile #: {topPercentile}");
+                //Console.WriteLine($"Bottom Percentile #: {bottomPercentile}");
+
+                var topPercentileCorrect = PosSample.Count(p => (float)(object)p >= topPercentile);
+                var topPercentileIncorrect = NegSample.Count(p => (float)(object)p >= topPercentile);
+                var bottomPercentileCorrect = NegSample.Count(p => (float)(object)p <= bottomPercentile);
+                var bottomPercentileIncorrect = PosSample.Count(p => (float)(object)p <= bottomPercentile);
+
+                RatioCorrectInPercentiles = (double)(topPercentileCorrect + bottomPercentileCorrect) /
+                                             (topPercentileCorrect + topPercentileIncorrect + bottomPercentileCorrect + bottomPercentileIncorrect);
             }
 
             public override Double ComputeWeightedAuc(out Double unweighted)
