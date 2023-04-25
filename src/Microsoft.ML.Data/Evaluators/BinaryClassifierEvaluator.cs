@@ -270,7 +270,6 @@ namespace Microsoft.ML.Data
                     auc.Add(agg.UnweightedAuc);
                     topBottomPercentileAccuracy.Add(agg.TopBottomPercentileAccuracy);
                     accuracy.Add(agg.UnweightedCounters.Acc);
-                    //topBottomPercentileAccuracy.Add(agg.UnweightedCounters.Acc); // ****************
                     posPrec.Add(agg.UnweightedCounters.PrecisionPos);
                     posRecall.Add(agg.UnweightedCounters.RecallPos);
                     negPrec.Add(agg.UnweightedCounters.PrecisionNeg);

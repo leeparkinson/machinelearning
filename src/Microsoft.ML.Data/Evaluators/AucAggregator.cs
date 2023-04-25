@@ -112,8 +112,8 @@ namespace Microsoft.ML.Data
 
                 var sortedScores = PosSample.Union(NegSample).OrderBy(v => v).ToArray();
                 int count = sortedScores.Length;
-                var topPercentile = (float)(object)sortedScores[(int)(count * 0.9)];
-                var bottomPercentile = (float)(object)sortedScores[(int)(count * 0.1)];
+                var topPercentile = (float)(object)sortedScores[(int)(count * 0.95)];
+                var bottomPercentile = (float)(object)sortedScores[(int)(count * 0.05)];
 
                 //Console.WriteLine($"Top Percentile #: {topPercentile}");
                 //Console.WriteLine($"Bottom Percentile #: {bottomPercentile}");
